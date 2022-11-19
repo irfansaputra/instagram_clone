@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/utils/color.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
 
@@ -42,7 +43,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 64,
                 ),
                 const SizedBox(
-                  height: 64,
+                  height: 32,
+                ),
+                Stack(
+                  children: [
+                    const CircleAvatar(
+                      radius: 64,
+                      backgroundImage: NetworkImage(
+                          'https://images.unsplash.com/photo-1626818590138-c1e906bf29be?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGdpcmwlMjBhbG9uZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'),
+                    ),
+                    Positioned(
+                      bottom: -10,
+                      left: 80,
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.add_a_photo,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 24,
                 ),
                 TextFieldInput(
                   hintText: "Enter your email",
@@ -73,14 +96,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   hintText: "Enter your bio",
                   textInputType: TextInputType.text,
                   textEditingController: _bioController,
-                  isPass: true,
                 ),
                 const SizedBox(
                   height: 24,
                 ),
                 InkWell(
-                  onTap: () {
-                    print('clicked');
+                  onTap: () async {
+                    String res = await AuthMethods().signUpUser(
+                        email: _emailController.text.trim(),
+                        pwd: _pwdController.text.trim(),
+                        username: _usernameController.text.trim(),
+                        bio: _bioController.text.trim());
+
+                    print(res);
                   },
                   child: Container(
                     width: double.infinity,
