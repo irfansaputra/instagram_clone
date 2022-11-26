@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/resources/auth_method.dart';
+import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/utils/color.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -16,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _pwdController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  Uint8List? image;
 
   @override
   void dispose() {
@@ -25,6 +30,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _pwdController.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+  }
+
+  void selectImage() async {
+    Uint8List img = await pickedImage(ImageSource.gallery);
+    setState(() {
+      image = img;
+    });
   }
 
   @override
@@ -47,16 +59,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 Stack(
                   children: [
-                    const CircleAvatar(
-                      radius: 64,
-                      backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1626818590138-c1e906bf29be?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGdpcmwlMjBhbG9uZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'),
-                    ),
+                    image != null
+                        ? CircleAvatar(
+                            radius: 64, backgroundImage: MemoryImage(image!))
+                        : CircleAvatar(
+                            radius: 64,
+                            backgroundImage: NetworkImage(
+                                'https://images.unsplash.com/photo-1626818590138-c1e906bf29be?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGdpcmwlMjBhbG9uZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'),
+                          ),
                     Positioned(
                       bottom: -10,
                       left: 80,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          selectImage();
+                        },
                         icon: const Icon(
                           Icons.add_a_photo,
                         ),
@@ -106,7 +123,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         email: _emailController.text.trim(),
                         pwd: _pwdController.text.trim(),
                         username: _usernameController.text.trim(),
-                        bio: _bioController.text.trim());
+                        bio: _bioController.text.trim(),
+                        file: image!);
 
                     print(res);
                   },
@@ -135,7 +153,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          print('sign up clicked');
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8),
